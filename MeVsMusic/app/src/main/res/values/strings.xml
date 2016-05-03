@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Me Vs Music</string>
+    <string name="sb_link">Visit Me Vs Music on http://mevsmusic.netau.net</string>
+    <string name="sb_url"><![CDATA[http://mevsmusic.netau.net/]]></string>
+    <string name="sb_msg"><u><b><i>Choose Your Music:</i></b></u></string>
+        
+    <string name="refresh">Refresh</string>
+    <string name="choose">..</string>
+    <string name="accelerometeroff">Turn Accelerometer ON</string>
+    <string name="accelerometeron">Turn Accelerometer OFF</string>
+    <string name="info">About</string>
+    
+</resources>
