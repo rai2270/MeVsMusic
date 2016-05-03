@@ -9,6 +9,6 @@ Try to hit as many chords as possible and use the Spectrum Bonuses to increase y
 You can turn ON the Accelerometer from the Settings Menu.
 
 credit: 
-Sound spectrum analyzer: http://www.un4seen.com/.
+Spectrum analyzer: http://www.un4seen.com/.
 OpenGL: https://github.com/Rajawali/Rajawali.
 Music: Two songs from http://www.audionautix.com/.
