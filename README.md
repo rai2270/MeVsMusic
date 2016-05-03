@@ -1,6 +1,6 @@
 # MeVsMusic
 
-![alt tag](https://play.google.com/store/apps/details?id=mvm.flying)
+https://play.google.com/store/apps/details?id=mvm.flying
 
 Project I develop back in 2012 for Samsung contest. 
 
