@@ -1,5 +1,7 @@
 # MeVsMusic
 
+![alt tag](https://github.com/rai2270/MeVsMusic/blob/master/MVM.PNG)
+
 https://play.google.com/store/apps/details?id=mvm.flying
 
 Project I develop back in 2012 for Samsung contest. 
