@@ -4,7 +4,7 @@
 
 https://play.google.com/store/apps/details?id=mvm.flying
 
-Project I develop back in 2012 for Samsung contest. 
+Project I develop in 2012 for Samsung contest. 
 
 The first game that enable you to play against your music. Guide your ship against the music spectrum. You can choose to play against MP3, WAV, OGG, AIFF, or MP2 sound file.
 Try to hit as many chords as possible and use the Spectrum Bonuses to increase your score. Each Chord is coming out of the spectrum if it reaches the maximum.
