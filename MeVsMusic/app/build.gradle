@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 19
+    compileSdkVersion 29
     buildToolsVersion "23.0.3"
 
     defaultConfig {
         applicationId "mvm.flying"
         minSdkVersion 10
-        targetSdkVersion 10
+        targetSdkVersion 29
     }
 
     buildTypes {
