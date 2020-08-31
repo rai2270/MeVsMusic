@@ -16,8 +16,6 @@ android {
             proguardFiles 'proguard.cfg'
         }
     }
-
-    ndkVersion "21.3.6528147"
 }
 
 dependencies {
