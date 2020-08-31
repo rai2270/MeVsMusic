@@ -8,6 +8,9 @@ android {
         applicationId "mvm.flying"
         minSdkVersion 10
         targetSdkVersion 29
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
+        }
     }
 
     buildTypes {
