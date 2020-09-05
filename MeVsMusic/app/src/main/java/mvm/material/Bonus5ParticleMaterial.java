@@ -134,21 +134,21 @@ public class Bonus5ParticleMaterial extends AMaterial {
 	public void setVelocity(final int velocityBufferHandle) {
 		GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, velocityBufferHandle);
 		GLES20.glEnableVertexAttribArray(maVelocityHandle);
-		fix.android.opengl.GLES20.glVertexAttribPointer(maVelocityHandle, 3, GLES20.GL_FLOAT, false,
+		GLES20.glVertexAttribPointer(maVelocityHandle, 3, GLES20.GL_FLOAT, false,
 				0, 0);
     }
 	
 	public void setStartTime(final int startTimeBufferHandle) {
 		GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, startTimeBufferHandle);
 		GLES20.glEnableVertexAttribArray(maStartTimeHandle);
-		fix.android.opengl.GLES20.glVertexAttribPointer(maStartTimeHandle, 1, GLES20.GL_FLOAT, false,
+		GLES20.glVertexAttribPointer(maStartTimeHandle, 1, GLES20.GL_FLOAT, false,
 				0, 0);
     }
 	
 	public void setSpeed(final int speedBufferHandle) {
 		GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, speedBufferHandle);
 		GLES20.glEnableVertexAttribArray(maSpeedHandle);
-		fix.android.opengl.GLES20.glVertexAttribPointer(maSpeedHandle, 1, GLES20.GL_FLOAT, false,
+		GLES20.glVertexAttribPointer(maSpeedHandle, 1, GLES20.GL_FLOAT, false,
 				0, 0);
     }
 
