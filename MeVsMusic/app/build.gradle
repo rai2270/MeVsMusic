@@ -1,13 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 19
+    compileSdkVersion 29
     buildToolsVersion "23.0.3"
 
     defaultConfig {
         applicationId "mvm.flying"
         minSdkVersion 10
-        targetSdkVersion 10
+        targetSdkVersion 29
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
+        }
     }
 
     buildTypes {
@@ -19,5 +22,4 @@ android {
 }
 
 dependencies {
-    compile files('libs/GoogleAdMobAdsSdk-6.4.1.jar')
 }
