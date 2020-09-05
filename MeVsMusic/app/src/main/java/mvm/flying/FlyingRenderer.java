@@ -1241,7 +1241,8 @@ public class FlyingRenderer extends RajawaliRenderer {
 				m_bbuf.asIntBuffer().get(m_fft); // get the data from the buffer into the array
 			    for ( int sp = SPECTRUM_SKIP_FREQ; sp < SPECTRUM_SIZE; sp++ )
 				{
-					float specSize = GetAmp( sp * g_spectrumFreqDelta, (sp + 1) * g_spectrumFreqDelta, m_fft ) * 100.0f;
+					//float specSize = GetAmp( sp * g_spectrumFreqDelta, (sp + 1) * g_spectrumFreqDelta, m_fft ) * 100.0f;
+					float specSize = GetAmp( sp * g_spectrumFreqDelta, (sp + 1) * g_spectrumFreqDelta, m_fft ) * 0.000067f;
 					if( specSize > mSpectrumVal[sp] )
 						mSpectrumVal[sp] = specSize;
 					else
@@ -1252,7 +1253,9 @@ public class FlyingRenderer extends RajawaliRenderer {
 						
 					if ( mSpectrumVal[sp] < 0.0f )
 						mSpectrumVal[sp] = 0.0f;
-					
+
+					//mSpectrumVal[sp] = 0.1f;
+
 					mObjSpectrumBin[sp-SPECTRUM_SKIP_FREQ].m_fTimeToReleaseChord -= fTimeLapsed;
 					
 					if ( mSpectrumVal[sp] == SPECTRUM_MAX_VALUE && 
