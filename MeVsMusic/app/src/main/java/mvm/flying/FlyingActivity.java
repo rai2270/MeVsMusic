@@ -493,8 +493,7 @@ public class FlyingActivity extends RActivity implements SensorEventListener, On
 		if(mRenderer!=null)
     		mRenderer.onPause();
 		
-		BASS.BASS_Stop();
-		BASS.BASS_Free();
+		BASS.BASS_RecordFree();
 		
 		//if(mRenderer!=null)
 		//	mRenderer.onSurfaceDestroyed();
