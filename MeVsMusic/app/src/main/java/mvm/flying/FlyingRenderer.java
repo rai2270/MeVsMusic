@@ -100,7 +100,7 @@ public class FlyingRenderer extends RajawaliRenderer {
     int[] fx;				// 3 eq bands + reverb
     float m_1024DivFreq;
     ByteBuffer m_bbuf; 		// allocate a buffer for the FFT data
-    int[] m_fft; 			// allocate an "int" array for the FFT data
+    float[] m_fft; 			// allocate an "int" array for the FFT data
     static float m_FFT_Time;
     static float m_fFFTTime;
     long mBassLen;
@@ -187,9 +187,9 @@ public class FlyingRenderer extends RajawaliRenderer {
 		m_freq = 44100;
 		fx = new int[4];
 		m_1024DivFreq = 1024.0f/(float)m_freq;
-	    m_bbuf=ByteBuffer.allocateDirect(1024*2); 	// allocate a buffer for the FFT data
+	    m_bbuf=ByteBuffer.allocateDirect(512 * 4); 	// allocate a buffer for the FFT data
 	    m_bbuf.order(null); 						// little-endian byte order
-	    m_fft=new int[512]; 						// allocate an "int" array for the FFT data
+	    m_fft=new float[512]; 						// allocate an "int" array for the FFT data
 	    m_FFT_Time = 0.02f;
 	    m_fFFTTime = m_FFT_Time;
 	    mBassLen = 0;
@@ -1238,11 +1238,11 @@ public class FlyingRenderer extends RajawaliRenderer {
 	    	int res = BASS.BASS_ChannelGetData(m_chan, m_bbuf, BASS.BASS_DATA_FFT1024);
 			if( res > 0 ) 
 			{
-				m_bbuf.asIntBuffer().get(m_fft); // get the data from the buffer into the array
+				m_bbuf.asFloatBuffer().get(m_fft); // get the data from the buffer into the array
 			    for ( int sp = SPECTRUM_SKIP_FREQ; sp < SPECTRUM_SIZE; sp++ )
 				{
-					//float specSize = GetAmp( sp * g_spectrumFreqDelta, (sp + 1) * g_spectrumFreqDelta, m_fft ) * 100.0f;
-					float specSize = GetAmp( sp * g_spectrumFreqDelta, (sp + 1) * g_spectrumFreqDelta, m_fft ) * 0.000067f;
+					float specSize = GetAmp( sp * g_spectrumFreqDelta, (sp + 1) * g_spectrumFreqDelta, m_fft ) * 130.0f;
+
 					if( specSize > mSpectrumVal[sp] )
 						mSpectrumVal[sp] = specSize;
 					else
@@ -1333,7 +1333,7 @@ public class FlyingRenderer extends RajawaliRenderer {
 		return false;
 	}
 	
-	private float GetAmp(float start, float end, int[] fft)
+	private float GetAmp(float start, float end, float[] fft)
     {
          float amp=0;
     	 int b,bin1,bin2;
@@ -1376,10 +1376,12 @@ public class FlyingRenderer extends RajawaliRenderer {
          }
 
          // 4th attempt. Taken from BASS for WinCE
-         int SPECHEIGHT = 50;
+         //int SPECHEIGHT = 50;
     	 //amp=(float)(Math.sqrt(amp/(float)(1<<24))*3*SPECHEIGHT-4);
-         amp = (((int)amp>>8)*10*SPECHEIGHT)>>16;
-    	 
+
+		// commented out when moved to bass 64bit
+         //amp = (((int)amp>>8)*10*SPECHEIGHT)>>16;
+
          return amp;
     } 
 	
