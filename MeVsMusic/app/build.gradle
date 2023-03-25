@@ -1,23 +1,23 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "23.0.3"
+    compileSdkVersion 33
+    buildToolsVersion "33.0.2"
 
     defaultConfig {
         applicationId "mvm.flying"
-        versionCode= 250
-        versionName= 2.5
+        versionCode= 251
+        versionName= 2.6
 
         minSdkVersion 10
-        targetSdkVersion 29
+        targetSdkVersion 33
 
         ndk {
             abiFilters 'armeabi-v7a', 'arm64-v8a'
         }
     }
 
-    ndkVersion = "21.3.6528147"
+    ndkVersion = "25.2.9519653"
 
     buildTypes {
         release {
