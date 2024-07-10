@@ -1,17 +1,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item
-        android:id="@+id/refresh"
+        android:id="@+id/menurefresh"
         android:icon="@drawable/refresh"
         android:title="@string/refresh" />
     <item
-        android:id="@+id/choose"
+        android:id="@+id/menuchoose"
         android:icon="@drawable/folder"
         android:title="@string/choose" />
     <item
-        android:id="@+id/accelerometer"
+        android:id="@+id/menuaccelerometer"
         android:title="@string/accelerometeroff" />
     <item
-        android:id="@+id/info"
+        android:id="@+id/menuinfo"
         android:icon="@drawable/info"
         android:title="@string/info" />
 </menu>

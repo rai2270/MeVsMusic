@@ -1,5 +1,7 @@
 package mvm.flying;
 
+import mvm.flying.R;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -134,13 +136,13 @@ public class MeVsMusicActivity extends ListActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.sb_main_menu, menu);
+		inflater.inflate(R.menu.sbmainmenu, menu);
 		return true;
 	}
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		MenuItem item = menu.findItem(R.id.accelerometer);
+		MenuItem item = menu.findItem(R.id.menuaccelerometer);
 		if (GameSettings.bAccelerometer == false) {
 			item.setTitle(R.string.accelerometeroff);
 		} else {
@@ -151,37 +153,37 @@ public class MeVsMusicActivity extends ListActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.refresh:
-				try {
-					loadList();
-				} catch (Exception e) {
-					e.printStackTrace(); // Log the exception
-				}
-				return true;
-			case R.id.choose:
-				OpenClicked(null);
-				return true;
-			case R.id.accelerometer:
-				GameSettings.bAccelerometer = !GameSettings.bAccelerometer;
-				try {
-					GameSettings.save(fileIO);
-				} catch (Exception e) {
-					e.printStackTrace(); // Log the exception
-				}
-				if (GameSettings.bAccelerometer) {
-					item.setTitle(R.string.accelerometeron);
-				} else {
-					item.setTitle(R.string.accelerometeroff);
-				}
-				return true;
-			case R.id.info:
-				Uri uriUrl = Uri.parse("http://mevsmusic.netau.net/m/"); // For Google Play
-				Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
-				startActivity(launchBrowser);
-				return true;
-			default:
-				return super.onOptionsItemSelected(item);
+		int id = item.getItemId();
+		if (id == R.id.menuaccelerometer) {
+			GameSettings.bAccelerometer = !GameSettings.bAccelerometer;
+			try {
+				GameSettings.save(fileIO);
+			} catch (Exception e) {
+				e.printStackTrace(); // Log the exception
+			}
+			if (GameSettings.bAccelerometer) {
+				item.setTitle(R.string.accelerometeron);
+			} else {
+				item.setTitle(R.string.accelerometeroff);
+			}
+			return true;
+		} else if (id == R.id.menurefresh) {
+			try {
+				loadList();
+			} catch (Exception e) {
+				e.printStackTrace(); // Log the exception
+			}
+			return true;
+		} else if (id == R.id.menuchoose) {
+			OpenClicked(null);
+			return true;
+		} else if (id == R.id.menuinfo) {
+			Uri uriUrl = Uri.parse("https://play.google.com/store/apps/details?id=mvm.flying"); // For Google Play
+			Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
+			startActivity(launchBrowser);
+			return true;
+		} else {
+			return super.onOptionsItemSelected(item);
 		}
 	}
 
