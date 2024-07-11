@@ -246,15 +246,9 @@ public class MeVsMusicActivity extends ListActivity {
 		mTracks.add(DEMO_TRACK1);
 		mTracks.add(DEMO_TRACK2);
 		mTracks.add(DEMO_TRACK3);
-		//mTracks.add(DEMO_TRACK4);
-		//mTracks.add(DEMO_TRACK5);
-		//mTracks.add(DEMO_TRACK6);
 		mTrackNames.add(DEMO_TRACK1);
 		mTrackNames.add(DEMO_TRACK2);
 		mTrackNames.add(DEMO_TRACK3);
-		//mTrackNames.add(DEMO_TRACK4);
-		//mTrackNames.add(DEMO_TRACK5);
-		//mTrackNames.add(DEMO_TRACK6);
 
 		if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) || Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED_READ_ONLY)) {
 			getAllTracks(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getPath());
