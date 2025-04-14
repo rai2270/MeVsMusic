@@ -1,24 +1,25 @@
-apply plugin: 'com.android.application'
+plugins {
+    id 'com.android.application'
+}
 
 android {
     namespace "mvm.flying" // Required for AGP 8.x
-    compileSdkVersion 35
-    buildToolsVersion "34.0.0" // Updated to work with SDK 35
-
+    compileSdk 35
+    
     defaultConfig {
         applicationId "mvm.flying"
         versionCode 251
         versionName "2.7" // String format required for Gradle 8.x
 
-        minSdkVersion 16 // Increased minimum SDK as 10 is too old for modern libraries
-        targetSdkVersion 35
+        minSdk 16 // Increased minimum SDK as 10 is too old for modern libraries
+        targetSdk 35
 
         ndk {
             abiFilters 'armeabi-v7a', 'arm64-v8a'
         }
     }
 
-    ndkVersion = "25.2.9519653"
+    ndkVersion "25.2.9519653"
 
     buildTypes {
         release {
@@ -34,11 +35,11 @@ android {
     }
     
     // Configure lint to allow the build to proceed
-    lintOptions {
+    lint {
         abortOnError false
         checkReleaseBuilds false
         // Ignore any remaining lint errors for now to focus on the OpenGL fixes
-        ignore 'InvalidWakeLockTag', 'OldTargetApi', 'ExpiredTargetSdkVersion', 'ObsoleteSdkInt'
+        disable 'InvalidWakeLockTag', 'OldTargetApi', 'ExpiredTargetSdkVersion', 'ObsoleteSdkInt'
     }
 }
 
