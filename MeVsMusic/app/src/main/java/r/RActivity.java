@@ -35,7 +35,15 @@ public class RActivity extends Activity {
         ConfigurationInfo info = am.getDeviceConfigurationInfo();
         if(info.reqGlEsVersion < 0x20000)
         	throw new Error("OpenGL ES 2.0 is not supported by this device");
-        mSurfaceView.setEGLContextClientVersion(2);
+        
+        // Use OpenGL ES 3.0 if available, otherwise fallback to 2.0
+        if (info.reqGlEsVersion >= 0x30000) {
+            mSurfaceView.setEGLContextClientVersion(3);
+            RajLog.d("Using OpenGL ES 3.0");
+        } else {
+            mSurfaceView.setEGLContextClientVersion(2);
+            RajLog.d("Using OpenGL ES 2.0");
+        }
         mLayout = new FrameLayout(this);
         mLayout.addView(mSurfaceView);
         
