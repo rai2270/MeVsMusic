@@ -372,42 +372,40 @@ public class MeVsMusicActivity extends ListActivity {
 	 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.refresh:
-			try
-			{
+		int itemId = item.getItemId();
+
+		if (itemId == R.id.refresh) {
+			try {
 				loadList();
-			} 
-			catch (Exception e) 
-			{
+			} catch (Exception e) {
+				// Handle exception
 			}
 			return true;
-		case R.id.choose:
+		} else if (itemId == R.id.choose) {
 			OpenClicked(null);
 			return true;
-		case R.id.accelerometer:
+		} else if (itemId == R.id.accelerometer) {
 			GameSettings.bAccelerometer = !GameSettings.bAccelerometer;
 			
 			try {
 				GameSettings.save(fileIO);
 			} catch (Exception e) {
+				// Handle exception
 			}
 			
-			if(GameSettings.bAccelerometer==false)
-			{
+			if (GameSettings.bAccelerometer == false) {
 				item.setTitle(R.string.accelerometeroff);
-			}
-			else
-			{
+			} else {
 				item.setTitle(R.string.accelerometeron);
 			}
 			return true;
-		case R.id.info:
+		} else if (itemId == R.id.info) {
 			//Uri uriUrl = Uri.parse("http://mevsmusic.netau.net/");
 			Uri uriUrl = Uri.parse("http://mevsmusic.netau.net/m/"); //For Google Play
-    		Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
-            startActivity(launchBrowser); 
-		default:
+			Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
+			startActivity(launchBrowser);
+			return true;
+		} else {
 			return super.onOptionsItemSelected(item);
 		}
 	}

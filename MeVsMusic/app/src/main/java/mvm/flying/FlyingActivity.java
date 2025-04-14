@@ -143,6 +143,10 @@ public class FlyingActivity extends RActivity implements SensorEventListener, On
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		
+		// Initialize OpenGL compatibility layer to prevent context errors
+		OpenGLCompat.init(this);
+		
 		mMultisamplingEnabled = false;
 		super.onCreate(savedInstanceState);
 		

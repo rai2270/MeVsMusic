@@ -35,7 +35,10 @@ public class RActivity extends Activity {
         ConfigurationInfo info = am.getDeviceConfigurationInfo();
         if(info.reqGlEsVersion < 0x20000)
         	throw new Error("OpenGL ES 2.0 is not supported by this device");
+        
+        // Use OpenGL ES 2.0 with custom context factory for better compatibility
         mSurfaceView.setEGLContextClientVersion(2);
+        mSurfaceView.setPreserveEGLContextOnPause(true);
         mLayout = new FrameLayout(this);
         mLayout.addView(mSurfaceView);
         
@@ -150,7 +153,8 @@ public class RActivity extends Activity {
     @Override
     protected void onResume() {
     	super.onResume();
-    	mSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+    	// Set continuous rendering mode to avoid context issues on some devices
+    	mSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     	mSurfaceView.onResume();
     }
     
@@ -169,9 +173,15 @@ public class RActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-    	mRajRenderer.onSurfaceDestroyed();
-        unbindDrawables(mLayout);
-        System.gc();
+        try {
+            if (mRajRenderer != null) {
+                mRajRenderer.onSurfaceDestroyed();
+            }
+            unbindDrawables(mLayout);
+            System.gc();
+        } catch (Exception e) {
+            // Prevent crashes during context destruction
+        }
     }
     
     protected void unbindDrawables(View view) {
