@@ -10,6 +10,7 @@ MeVsMusic is a single-module Android game from 2012 (min SDK 16, target SDK 35) 
 
 ## Architecture
 - **Game code**: `app/src/main/java/mvm/` — `MeVsMusicActivity` (launcher/song list), `FlyingActivity` + `FlyingRenderer` (game), plus `settings/`, `particle/`, `material/`, `diplaylist/`
+- **Platform-independent game rules**: `app/src/main/java/mvm/game/` — `GameLogic` (state machine, scoring, spawn/collision rules, spectrum decisions) and `GameEvents` (UI callback interface). Must stay free of Android/Rajawali/BASS imports — this is the porting seam.
 - **Vendored Rajawali 3D engine**: `app/src/main/java/r/` and `net/rbgrn/` — third-party engine source; prefer fixing game code over modifying engine code
 - **BASS audio library**: Java wrapper in `com/un4seen/bass/`, prebuilt `libbass.so` binaries in `app/src/main/jniLibs/` — binary-only, cannot be rebuilt or modified
 - The root `MeVsMusic/` directory is stale, untracked build output — ignore it; the real module is `app/`
