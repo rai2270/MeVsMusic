@@ -49,7 +49,7 @@ import mvm.flying.R;
 
 import com.un4seen.bass.BASS;
 
-public class FlyingActivity extends RActivity implements SensorEventListener, OnTouchListener { 
+public class FlyingActivity extends RActivity implements SensorEventListener, OnTouchListener, mvm.game.GameEvents {
 	
 	private final static int JOYSTICK_SIZE = 180;// dpad is 180; dpad2 is 128; dpad3 is 180
 	private final static int JOYSTICK_SIZE_HALF = JOYSTICK_SIZE / 2;
@@ -160,7 +160,7 @@ public class FlyingActivity extends RActivity implements SensorEventListener, On
 		{
 			bAccelerometer = false;
 		}
-		mRenderer = new FlyingRenderer(this, mTitle, mFileName, bAccelerometer);
+		mRenderer = new FlyingRenderer(this, this, mTitle, mFileName, bAccelerometer);
 		mRenderer.setSurfaceView(mSurfaceView);
 		mRenderer.setUsesCoverageAa(mUsesCoverageAa);
 		//mRenderer.setFPSUpdateListener(this);

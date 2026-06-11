@@ -3,8 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="mvm.flying" >
 
+    <!-- App-specific external dir needed WRITE before API 19; nothing else is written. -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        tools:ignore="ScopedStorage" />
+        android:maxSdkVersion="18" />
+    <!-- Music library listing: READ_EXTERNAL_STORAGE up to Android 12, READ_MEDIA_AUDIO from 13. -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>

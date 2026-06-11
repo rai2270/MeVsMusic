@@ -1,19 +1,28 @@
 package mvm.flying;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import mvm.settings.GameFileIO;
 import mvm.settings.GameSettings;
-import android.app.AlertDialog;
+import android.Manifest;
 import android.app.ListActivity;
-import android.content.DialogInterface;
+import android.content.ActivityNotFoundException;
+import android.content.ContentUris;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -38,7 +47,11 @@ public class MeVsMusicActivity extends ListActivity {
 	
 	public static String DEMO_TRACK1 = "Sunset.mp3";
 	public static String DEMO_TRACK2 = "FeelsGood2B.mp3";
-	public static String DEMO_TRACK3 = ".. (search my device)";
+	public static String DEMO_TRACK3 = ".. (pick a song from my device)";
+
+	private static final int REQUEST_PICK_AUDIO = 1;
+	private static final int REQUEST_AUDIO_PERMISSION = 2;
+	private boolean bAudioPermissionRequested = false;
 	
 	
 	//boolean bAccelerometer = false;
@@ -274,13 +287,37 @@ public class MeVsMusicActivity extends ListActivity {
 	    }
 	} */
 	
+	private String audioPermission()
+	{
+		return Build.VERSION.SDK_INT >= 33 ? Manifest.permission.READ_MEDIA_AUDIO : Manifest.permission.READ_EXTERNAL_STORAGE;
+	}
+
+	private boolean hasAudioPermission()
+	{
+		return Build.VERSION.SDK_INT < 23 || checkSelfPermission(audioPermission()) == PackageManager.PERMISSION_GRANTED;
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+		if(requestCode == REQUEST_AUDIO_PERMISSION && hasAudioPermission())
+		{
+			loadList();
+		}
+	}
+
 	private void loadList()
 	{
 		if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) || Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED_READ_ONLY)){
 		} else{
 			toast[0].show();
 		}
-		
+
+		if(Build.VERSION.SDK_INT >= 23 && !hasAudioPermission() && !bAudioPermissionRequested)
+		{
+			bAudioPermissionRequested = true;
+			requestPermissions(new String[]{audioPermission()}, REQUEST_AUDIO_PERMISSION);
+		}
+
 		toast[1].show();
 		
 		//listTask = new ListTask();
@@ -410,63 +447,65 @@ public class MeVsMusicActivity extends ListActivity {
 		}
 	}
 	
-	String[] filelist;
-	File filepath=new File("/mnt/extsd");
 	public void OpenClicked(View v) {
+		// System audio picker: works on every Android version without storage permissions.
+		Intent intent = new Intent(Build.VERSION.SDK_INT >= 19 ? Intent.ACTION_OPEN_DOCUMENT : Intent.ACTION_GET_CONTENT);
+		intent.addCategory(Intent.CATEGORY_OPENABLE);
+		intent.setType("audio/*");
 		try
 		{
-			// User need to select the track file from inside a directory:
-			String[] list=filepath.list();//getAllTracks(filepath);//filepath.list();
-			if (list==null) list=new String[0];
-			if (!filepath.getPath().equals("/")) {
-				filelist=new String[list.length+1];
-				filelist[0]="..";
-				System.arraycopy(list, 0, filelist, 1, list.length);
-			} else
-				filelist=list;
-		    new AlertDialog.Builder(this)
-				.setTitle("Choose a file to play")
-				.setItems(filelist, new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						File sel;
-						if (filelist[which].equals("..")) sel=filepath.getParentFile();
-						else sel=new File(filepath, filelist[which]);
-						if (sel.isDirectory()) {
-							filepath=sel;
-							OpenClicked(null);
-						} else {
-							String file=sel.getAbsoluteFile().getPath();
-							String title=sel.getAbsoluteFile().getName();
-							
-							boolean typeSupport = false;
-							int mid = title.lastIndexOf(".");
-			                String ext=title.substring(mid+1,title.length()); 
-			                for(int j=0;j<EXTENSIONS_NAMES.length;j++)
-			                {
-			                	if(ext.equalsIgnoreCase(EXTENSIONS_NAMES[j]))
-			        			{
-			                		typeSupport = true;
-			                		break;
-			        			}
-			                }
-			                if(typeSupport)
-			                {
-			                	//if(bStartActivityAllowed)
-			            		//	return;
-			            		//bStartActivityAllowed = true;
-			                   	StartFlyingActivity(title, file);
-			                }
-			                else
-			                	toast[5].show();
-						}
-					}
-				})
-		   		.show();
+			startActivityForResult(intent, REQUEST_PICK_AUDIO);
 		}
-		catch(Exception e)
+		catch(ActivityNotFoundException e)
 		{
-			
+			toast[5].show();
 		}
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if(requestCode != REQUEST_PICK_AUDIO || resultCode != RESULT_OK || data == null || data.getData() == null)
+			return;
+
+		Uri uri = data.getData();
+		String title = queryDisplayName(uri);
+		if(title == null || !isSupportedType(title))
+		{
+			toast[5].show();
+			return;
+		}
+
+		StartFlyingActivity(title, uri.toString());
+	}
+
+	private String queryDisplayName(Uri uri)
+	{
+		Cursor c = getContentResolver().query(uri, new String[]{OpenableColumns.DISPLAY_NAME}, null, null, null);
+		if(c != null)
+		{
+			try
+			{
+				if(c.moveToFirst() && c.getString(0) != null)
+					return c.getString(0);
+			}
+			finally
+			{
+				c.close();
+			}
+		}
+		return uri.getLastPathSegment();
+	}
+
+	private boolean isSupportedType(String fileName)
+	{
+		String ext = fileName.substring(fileName.lastIndexOf(".") + 1);
+		for(int j=0;j<EXTENSIONS_NAMES.length;j++)
+		{
+			if(ext.equalsIgnoreCase(EXTENSIONS_NAMES[j]))
+				return true;
+		}
+		return false;
 	}
 	
 	public void FindTracks() {
@@ -485,33 +524,10 @@ public class MeVsMusicActivity extends ListActivity {
 		//mTrackNames.add(DEMO_TRACK5);
 		//mTrackNames.add(DEMO_TRACK6);
 		
-		if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) || Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED_READ_ONLY)){
-			getAllTracks(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getPath());
-    		
-		} else{
-			//Toast.makeText(getBaseContext(), "SD Card is either mounted elsewhere or is unusable", Toast.LENGTH_LONG).show();
-			return;
-		}
-		
-		if(mTracks.size()>0){
-			if(mTrackNames.size()>0)
-			{
-				//Toast.makeText(getBaseContext(), "Loaded " + Integer.toString(mTrackNames.size()) + " Tracks", Toast.LENGTH_SHORT).show();
-				return;
-			}
-			else
-			{
-				//Toast.makeText(getBaseContext(), "No playable tracks found", Toast.LENGTH_LONG).show();
-				return;
-			}
-		}
-		else
+		if(hasAudioPermission())
 		{
-			//Toast.makeText(getBaseContext(), "Tracks lists are empty", Toast.LENGTH_LONG).show();
-			return;
+			getAllTracks();
 		}
-		
-		
 	}
 	
 	public void onListItemClick(ListView parent, View v, int position, long id) {
@@ -527,16 +543,58 @@ public class MeVsMusicActivity extends ListActivity {
 		StartFlyingActivity(mTrackNames.get(position), mTracks.get(position));
 	}
 	
-	private void StartFlyingActivity(String title, String fileName)
+	private void StartFlyingActivity(final String title, final String fileName)
 	{
-		/*if(listTask!=null)
+		// BASS plays from a real file path; content:// tracks are first copied to the app cache.
+		if(fileName.startsWith("content:"))
 		{
-			try {
-				listTask.cancel(true);
-			} catch (Exception e) {
+			toast[1].show();
+			new Thread(() -> {
+				try
+				{
+					final File cached = copyToCache(Uri.parse(fileName), title);
+					mHandler.post(() -> launchGame(title, cached.getPath()));
+				}
+				catch(Exception e)
+				{
+					mHandler.post(() -> toast[5].show());
+				}
+			}).start();
+			return;
+		}
+
+		launchGame(title, fileName);
+	}
+
+	private File copyToCache(Uri uri, String name) throws java.io.IOException
+	{
+		File out = new File(getCacheDir(), name.replace(File.separatorChar, '_'));
+		InputStream in = getContentResolver().openInputStream(uri);
+		try
+		{
+			OutputStream os = new FileOutputStream(out);
+			try
+			{
+				byte[] buf = new byte[64 * 1024];
+				int n;
+				while((n = in.read(buf)) > 0)
+					os.write(buf, 0, n);
 			}
-		}*/
-		
+			finally
+			{
+				os.close();
+			}
+		}
+		finally
+		{
+			if(in != null)
+				in.close();
+		}
+		return out;
+	}
+
+	private void launchGame(String title, String fileName)
+	{
 		for(int i=0;i<NUM_TOAST;i++)
 		{
 			try {
@@ -544,7 +602,7 @@ public class MeVsMusicActivity extends ListActivity {
 			} catch (Exception e) {
 			}
 		}
-		
+
 		Intent intent = new Intent(MeVsMusicActivity.this, FlyingActivity.class);
 		intent.putExtra("Title", title);
 		intent.putExtra("FileName", fileName);
@@ -576,75 +634,32 @@ public class MeVsMusicActivity extends ListActivity {
 	  } 
 	}*/
 
-	class ExampleItem {
-		public String title;
-		public File file;
-
-		public ExampleItem() {
-			
+	// Lists the device's music via MediaStore (the tracks are stored as content:// URI strings).
+	// Only real music: the IS_MUSIC flag and a 10s minimum exclude notification sounds and
+	// ringtones (e.g. "Slack - Boing.mp3"); anything filtered out is still reachable via the picker.
+	public void getAllTracks()
+	{
+		String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0 AND " + MediaStore.Audio.Media.DURATION + " >= 10000";
+		Cursor c = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+				new String[]{MediaStore.Audio.Media._ID, MediaStore.Audio.Media.DISPLAY_NAME},
+				selection, null, MediaStore.Audio.Media.DISPLAY_NAME);
+		if(c == null)
+			return;
+		try
+		{
+			while(c.moveToNext())
+			{
+				String name = c.getString(1);
+				if(name != null && isSupportedType(name))
+				{
+					mTracks.add(ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, c.getLong(0)).toString());
+					mTrackNames.add(name);
+				}
+			}
+		}
+		finally
+		{
+			c.close();
 		}
 	}
-	
-	   
-	public void getAllTracks(String dirPath)
-	{
-		File f = new File(dirPath);
-        File[] files = f.listFiles();
-        for(int i=0;i<files.length;i++)
-        {
-        	if(files[i].isFile())
-        	{
-        		int mid = files[i].getName().lastIndexOf(".");
-                String ext=files[i].getName().substring(mid+1,files[i].getName().length()); 
-                for(int j=0;j<EXTENSIONS_NAMES.length;j++)
-                {
-                	if(ext.equalsIgnoreCase(EXTENSIONS_NAMES[j]))
-        			{
-                		mTracks.add(files[i].getAbsoluteFile().getPath());
-                		mTrackNames.add(files[i].getAbsoluteFile().getName());
-                		break;
-        			}
-	                
-                }
-        	}
-        	else 
-        		getAllTracks(files[i].getAbsoluteFile().getPath());
-        }
-	}
-	/*
-	private String[] getAllTracks(File dirPath)
-	{
-		List<String> mTempFiles = new ArrayList<String>();
-		File f = dirPath;//new File(dirPath);
-        File[] files = f.listFiles();
-        if(files==null)
-        	return null;
-        for(int i=0;i<files.length;i++)
-        {
-        	if(files[i].isFile())
-        	{
-        		int mid = files[i].getName().lastIndexOf(".");
-                String ext=files[i].getName().substring(mid+1,files[i].getName().length()); 
-                for(int j=0;j<EXTENSIONS_NAMES.length;j++)
-                {
-                	if(ext.equalsIgnoreCase(EXTENSIONS_NAMES[j]))
-        			{
-                		mTempFiles.add(files[i].getAbsoluteFile().getPath());
-                		break;
-        			}
-	                
-                }
-        	}
-        	else 
-        		mTempFiles.add(files[i].getAbsoluteFile().getPath());
-        }
-        if(mTempFiles.size()==0)
-        	return null;
-        else
-        	return (String[]) mTempFiles.toArray();
-	}*/
-	
-	
-	
-	
 }

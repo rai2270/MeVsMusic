@@ -4,9 +4,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-import mvm.diplaylist.gamecommon;
 import mvm.flying.FlyingRenderer;
-import mvm.material.BulletParticleMaterial;
+import mvm.material.GameParticleMaterial;
 
 import r.BaseObject3D;
 import r.Camera;
@@ -30,7 +29,7 @@ public final class BulletParticleSystem extends BaseObject3D {
 	protected int mSpeedBufferHandle;
 	protected float mTime;
 	protected float mPointSize = 10.0f;
-	private BulletParticleMaterial mBulletMat;
+	private GameParticleMaterial mBulletMat;
 	private int mNumParticles;
 	
 	public Number3D[] mBulletPosition;
@@ -187,7 +186,7 @@ public final class BulletParticleSystem extends BaseObject3D {
 	
 	public void setMaterial(AMaterial material, boolean copyTextures) {
 		super.setMaterial(material, copyTextures);
-		mBulletMat = (BulletParticleMaterial)material;
+		mBulletMat = (GameParticleMaterial)material;
 	}
 	
 	public void setTime(float time) {
