@@ -635,11 +635,14 @@ public class MeVsMusicActivity extends ListActivity {
 	}*/
 
 	// Lists the device's music via MediaStore (the tracks are stored as content:// URI strings).
+	// Only real music: the IS_MUSIC flag and a 10s minimum exclude notification sounds and
+	// ringtones (e.g. "Slack - Boing.mp3"); anything filtered out is still reachable via the picker.
 	public void getAllTracks()
 	{
+		String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0 AND " + MediaStore.Audio.Media.DURATION + " >= 10000";
 		Cursor c = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 				new String[]{MediaStore.Audio.Media._ID, MediaStore.Audio.Media.DISPLAY_NAME},
-				null, null, MediaStore.Audio.Media.DISPLAY_NAME);
+				selection, null, MediaStore.Audio.Media.DISPLAY_NAME);
 		if(c == null)
 			return;
 		try
