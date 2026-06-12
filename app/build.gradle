@@ -8,8 +8,8 @@ android {
     
     defaultConfig {
         applicationId "mvm.flying"
-        versionCode 251
-        versionName "2.7" // String format required for Gradle 8.x
+        versionCode 252
+        versionName "2.8" // String format required for Gradle 8.x
 
         minSdk 16 // Increased minimum SDK as 10 is too old for modern libraries
         targetSdk 35
